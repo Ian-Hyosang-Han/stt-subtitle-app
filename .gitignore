@@ -31,7 +31,7 @@ frontend/.env
 
 # --- App runtime data (uploads / generated) ---
 data/
-!data/.gitkeep
+!data/**/.gitkeep
 
 # --- Logs / Temp files ---
 *.log
