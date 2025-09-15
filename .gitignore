@@ -1,0 +1,44 @@
+# --- OS / Editors ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Python (backend) ---
+backend/.venv/
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+coverage/
+
+# --- Node (frontend) ---
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Environment / Secrets ---
+.env
+*.env
+backend/.env
+frontend/.env
+
+# --- App runtime data (uploads / generated) ---
+data/
+!data/.gitkeep
+
+# --- Logs / Temp files ---
+*.log
+*.tmp
+*.swp
+*.swo
+
+# --- macOS metadata ---
+.AppleDouble
+.LSOverride
