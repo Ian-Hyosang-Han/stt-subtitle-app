@@ -7,9 +7,9 @@ export default function VideoUploader({ onFile }) {
           accept="video/*,audio/*"
           onChange={(e) => onFile?.(e.target.files?.[0] ?? null)}
         />
-        <p className="text-xs text-gray-500 mt-2">
+        {/* <p className="text-xs text-gray-500 mt-2">
           예) ~/Downloads/golden.mp4
-        </p>
+        </p> */}
       </div>
     );
   }
