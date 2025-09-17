@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-export default function VideoPlayer({ src, vttUrl, lang = "en", loop }) {
+export default function VideoPlayer({ src, vttUrl, lang = "en", loop, onMeasured }) {
   const videoRef = useRef(null);
 
   // loop 범위가 바뀌면 해당 구간으로 점프 & 재생
@@ -8,7 +8,6 @@ export default function VideoPlayer({ src, vttUrl, lang = "en", loop }) {
     const v = videoRef.current;
     if (!v || !loop) return;
     const { start = 0 } = loop;
-    // 메타데이터가 아직 안 떴다면 loadedmetadata 이후로 이동
     const jump = () => {
       try {
         v.currentTime = Math.max(0, Number(start) || 0);
@@ -27,10 +26,9 @@ export default function VideoPlayer({ src, vttUrl, lang = "en", loop }) {
     const onTime = () => {
       if (!loop) return;
       const start = Math.max(0, Number(loop.start) || 0);
-      const end = Math.max(start + 0.05, Number(loop.end) || 0); // 최소 길이 확보
+      const end = Math.max(start + 0.05, Number(loop.end) || 0);
       if (v.currentTime >= end - EPS) {
         v.currentTime = start;
-        // iOS 등에서 자동 재생 이슈 방지
         v.play().catch(() => {});
       }
     };
@@ -38,18 +36,44 @@ export default function VideoPlayer({ src, vttUrl, lang = "en", loop }) {
     return () => v.removeEventListener("timeupdate", onTime);
   }, [loop]);
 
+  // 높이 측정 (사이드바 높이를 비디오와 동일하게 만들기 위해)
+  useEffect(() => {
+    const measure = () => {
+      const h = videoRef.current?.offsetHeight || 0;
+      onMeasured?.(h);
+    };
+    const v = videoRef.current;
+    if (!v) return;
+    measure();
+    v.addEventListener("loadedmetadata", measure);
+    window.addEventListener("resize", measure);
+    return () => {
+      v.removeEventListener("loadedmetadata", measure);
+      window.removeEventListener("resize", measure);
+    };
+  }, [src, vttUrl, onMeasured]);
+
   if (!src) return null;
 
   return (
     <div className="mt-4">
       <video
+        key={src}              // ✅ 소스 변경 시 강제 리로드 → 즉시 전환
         ref={videoRef}
         controls
-        className="w-full max-w-3xl rounded-xl shadow"
+        className="w-full rounded-xl shadow"
         crossOrigin="anonymous"
       >
         <source src={src} />
-        {vttUrl && <track kind="subtitles" src={vttUrl} srcLang={lang} default />}
+        {vttUrl && (
+          <track
+            key={vttUrl}       // 트랙 URL 변경 시 강제 리로드
+            kind="subtitles"
+            src={vttUrl}
+            srcLang={lang}
+            default
+          />
+        )}
         지원되지 않는 브라우저입니다.
       </video>
       {loop && (

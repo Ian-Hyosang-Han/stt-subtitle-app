@@ -30,12 +30,6 @@ def transcribe_to_segments(
         language=language,           # None이면 자동감지
         vad_filter=False,          # ✅ 토글
         beam_size=beam_size,
-        # 세분화가 약하면 아래 옵션을 바꿔보세요:
-        # temperature=0.2,
-        # no_speech_threshold=0.4,
-        # compression_ratio_threshold=2.4,
-        # log_prob_threshold=-1.0,
-        # vad_parameters={"min_silence_duration_ms": 250},
     )
 
     out: List[Dict] = []
